@@ -1,4 +1,4 @@
-package com.example.Review1.Entity;
+package com.College.timetable.Entity;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;

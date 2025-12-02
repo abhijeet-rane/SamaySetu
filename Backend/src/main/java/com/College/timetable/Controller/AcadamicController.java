@@ -13,7 +13,7 @@ import com.College.timetable.Service.AcadamicService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/academic-years")
+@RequestMapping("admin/api/academic-years")
 public class AcadamicController {
 	
 	@Autowired

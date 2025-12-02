@@ -13,7 +13,7 @@ import com.College.timetable.Service.DivisionService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/divisions")
+@RequestMapping("admin/api/divisions")
 public class DivisionController {
 	
 	@Autowired

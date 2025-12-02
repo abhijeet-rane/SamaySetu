@@ -13,7 +13,7 @@ import com.College.timetable.Service.RoomService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/rooms")
+@RequestMapping("admin/api/rooms")
 public class RoomController {
 	
 	@Autowired

@@ -1,12 +1,16 @@
 package com.College.timetable.Entity;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -35,7 +39,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeacherEntity {
+public class TeacherEntity implements UserDetails{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,9 +73,22 @@ public class TeacherEntity {
 	@Column(name = "is_active")
 	private Boolean isActive = true;
 	
+	@NotBlank(message = "Password is required")
+	private String password;
+
+	@Column(name = "role")
+	private String role="TEACHER";
+	
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Timestamp createdAt;
+	
+	@Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Spring Security needs ROLE_ prefix internally
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+    }
+
 	
 	@UpdateTimestamp
 	@Column(name = "updated_at")
@@ -95,4 +112,9 @@ public class TeacherEntity {
 	
 	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
 	private List<TimetableEntry> timetableEntries;
+
+	@Override
+	public String getUsername() {
+		return email;
+	}
 }
