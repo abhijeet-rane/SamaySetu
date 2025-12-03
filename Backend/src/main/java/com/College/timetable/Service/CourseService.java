@@ -1,5 +1,7 @@
 package com.College.timetable.Service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +21,50 @@ public class CourseService {
 	@Autowired
 	private Dep_repo department;
 	
-	public void add(CourseEntity c) {
+	public CourseEntity add(CourseEntity c) {
 		// Validate department exists
 		if (c.getDepartment() != null && c.getDepartment().getId() != null) {
 			DepartmentEntity depart = department.findById(c.getDepartment().getId())
 				.orElseThrow(() -> new EntityNotFoundException("Department not found"));
 		}
-		course.save(c);
+		return course.save(c);
+	}
+	
+	public List<CourseEntity> getAll() {
+		return course.findAll();
+	}
+	
+	public CourseEntity getById(Long id) {
+		return course.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+	}
+	
+	public CourseEntity update(Long id, CourseEntity c) {
+		CourseEntity existing = getById(id);
+		existing.setName(c.getName());
+		existing.setCode(c.getCode());
+		existing.setCourseType(c.getCourseType());
+		existing.setCredits(c.getCredits());
+		existing.setHoursPerWeek(c.getHoursPerWeek());
+		existing.setSemester(c.getSemester());
+		existing.setDescription(c.getDescription());
+		existing.setPrerequisites(c.getPrerequisites());
+		existing.setIsActive(c.getIsActive());
+		
+		// Update department if provided
+		if (c.getDepartment() != null && c.getDepartment().getId() != null) {
+			DepartmentEntity depart = department.findById(c.getDepartment().getId())
+				.orElseThrow(() -> new EntityNotFoundException("Department not found"));
+			existing.setDepartment(depart);
+		}
+		
+		return course.save(existing);
+	}
+	
+	public void delete(Long id) {
+		if (!course.existsById(id)) {
+			throw new EntityNotFoundException("Course not found with id: " + id);
+		}
+		course.deleteById(id);
 	}
 }

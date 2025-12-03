@@ -6,8 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,15 +30,35 @@ public class DepartmentController {
 	private DepartmentService departmentService;
 	
 	@PostMapping
-	public ResponseEntity<String> addDepartment(@Valid @RequestBody DepartmentEntity dep) {
+	public ResponseEntity<DepartmentEntity> addDepartment(@Valid @RequestBody DepartmentEntity dep) {
 		log.info("Adding new department: {}", dep.getName());
-		departmentService.addDep(dep);
-		return ResponseEntity.ok("Department added successfully");
+		DepartmentEntity saved = departmentService.addDep(dep);
+		return ResponseEntity.ok(saved);
 	}
 	
 	@GetMapping
 	public ResponseEntity<List<DepartmentEntity>> getAllDepartments() {
 		log.info("Fetching all departments");
 		return ResponseEntity.ok(departmentService.getall());
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<DepartmentEntity> getDepartmentById(@PathVariable Long id) {
+		log.info("Fetching department with id: {}", id);
+		return ResponseEntity.ok(departmentService.getById(id));
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<DepartmentEntity> updateDepartment(@PathVariable Long id, @Valid @RequestBody DepartmentEntity dep) {
+		log.info("Updating department with id: {}", id);
+		DepartmentEntity updated = departmentService.update(id, dep);
+		return ResponseEntity.ok(updated);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deleteDepartment(@PathVariable Long id) {
+		log.info("Deleting department with id: {}", id);
+		departmentService.delete(id);
+		return ResponseEntity.ok("Department deleted successfully");
 	}
 }

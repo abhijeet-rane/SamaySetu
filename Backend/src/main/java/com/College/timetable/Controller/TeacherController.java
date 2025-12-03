@@ -1,8 +1,15 @@
 package com.College.timetable.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,8 +27,36 @@ public class TeacherController {
 	private TeacherService teacherService;
 	
 	@PostMapping
-	public ResponseEntity<String> addTeacher(@Valid @RequestBody TeacherEntity teach) {
-		teacherService.add(teach);
-		return ResponseEntity.ok("Teacher added successfully");
+	public ResponseEntity<TeacherEntity> addTeacher(@Valid @RequestBody TeacherEntity teach) {
+		TeacherEntity saved = teacherService.add(teach);
+		return ResponseEntity.ok(saved);
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<TeacherEntity>> getAllTeachers() {
+		return ResponseEntity.ok(teacherService.getAll());
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<TeacherEntity> getTeacherById(@PathVariable Long id) {
+		return ResponseEntity.ok(teacherService.getById(id));
+	}
+	
+	@GetMapping("/profile")
+	public ResponseEntity<TeacherEntity> getProfile(Authentication authentication) {
+		String email = authentication.getName();
+		return ResponseEntity.ok(teacherService.getByEmail(email));
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<TeacherEntity> updateTeacher(@PathVariable Long id, @Valid @RequestBody TeacherEntity teach) {
+		TeacherEntity updated = teacherService.update(id, teach);
+		return ResponseEntity.ok(updated);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deleteTeacher(@PathVariable Long id) {
+		teacherService.delete(id);
+		return ResponseEntity.ok("Teacher deleted successfully");
 	}
 }
