@@ -11,6 +11,7 @@ com\College\timetable\Controller\CourseController.class
 com\College\timetable\Entity\Division.class
 com\College\timetable\Util\JWTUtil.class
 com\College\timetable\Service\TeacherService.class
+com\College\timetable\Service\TimeSlotService.class
 com\College\timetable\Configuration\SecurityConfig.class
 com\College\timetable\Controller\RoomController.class
 com\College\timetable\Service\CourseService.class
@@ -27,6 +28,7 @@ com\College\timetable\Repository\Acadamic_repo.class
 com\College\timetable\Controller\AuthController.class
 com\College\timetable\Repository\TimetableEntry_repo.class
 com\College\timetable\Entity\ClassRoom.class
+com\College\timetable\Controller\TimeSlotController.class
 com\College\timetable\Entity\TimeSlot.class
 com\College\timetable\Repository\TimeSlot_repo.class
 com\College\timetable\Controller\DivisionController.class

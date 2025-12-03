@@ -39,14 +39,14 @@ public class TeacherService implements UserDetailsService{
     private EmailService emailService;
 
 	
-	public void add(TeacherEntity teach) {
+	public TeacherEntity add(TeacherEntity teach) {
 		// Validate department exists
 		if (teach.getDepartment() != null && teach.getDepartment().getId() != null) {
 			DepartmentEntity depart = department.findById(teach.getDepartment().getId())
 				.orElseThrow(() -> new EntityNotFoundException("Department not found"));
 		}
 		teach.setPassword(passEncode.encode(teach.getPassword()));
-        teacher.save(teach);
+        return teacher.save(teach);
 	}
 	
 	public void register(com.College.timetable.IO.RegisterRequest request) {
@@ -190,6 +190,51 @@ public class TeacherService implements UserDetailsService{
 
         return teach.getRole(); 
     }
-
+	
+	public java.util.List<TeacherEntity> getAll() {
+		return teacher.findAll();
+	}
+	
+	public TeacherEntity getById(Long id) {
+		return teacher.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException("Teacher not found with id: " + id));
+	}
+	
+	public TeacherEntity getByEmail(String email) {
+		return teacher.findByEmail(email)
+			.orElseThrow(() -> new EntityNotFoundException("Teacher not found with email: " + email));
+	}
+	
+	public TeacherEntity update(Long id, TeacherEntity teach) {
+		TeacherEntity existing = getById(id);
+		existing.setName(teach.getName());
+		existing.setEmployeeId(teach.getEmployeeId());
+		existing.setEmail(teach.getEmail());
+		existing.setPhone(teach.getPhone());
+		existing.setWeeklyHoursLimit(teach.getWeeklyHoursLimit());
+		existing.setSpecialization(teach.getSpecialization());
+		existing.setIsActive(teach.getIsActive());
+		
+		// Update password only if provided
+		if (teach.getPassword() != null && !teach.getPassword().isEmpty()) {
+			existing.setPassword(passEncode.encode(teach.getPassword()));
+		}
+		
+		// Update department if provided
+		if (teach.getDepartment() != null && teach.getDepartment().getId() != null) {
+			DepartmentEntity depart = department.findById(teach.getDepartment().getId())
+				.orElseThrow(() -> new EntityNotFoundException("Department not found"));
+			existing.setDepartment(depart);
+		}
+		
+		return teacher.save(existing);
+	}
+	
+	public void delete(Long id) {
+		if (!teacher.existsById(id)) {
+			throw new EntityNotFoundException("Teacher not found with id: " + id);
+		}
+		teacher.deleteById(id);
+	}
 	
 }

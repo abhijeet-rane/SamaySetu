@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "samaysetu-api-collection",
-		"name": "SamaySetu Timetable API",
-		"description": "Complete API collection for SamaySetu Timetable Management System with Authentication, Email Verification, and CRUD operations",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "samaysetu-api-collection-v2",
+		"name": "SamaySetu Timetable API - Complete",
+		"description": "Complete API collection for SamaySetu Timetable Management System with Authentication, Email Verification, and Full CRUD operations for all 7 entities. Updated: December 2024",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"version": "2.0.0"
 	},
 	"auth": {
 		"type": "bearer",
@@ -270,6 +271,34 @@
 			"name": "Teachers",
 			"item": [
 				{
+					"name": "Get All Teachers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/teachers",
+							"host": ["{{base_url}}"],
+							"path": ["api", "teachers"]
+						},
+						"description": "Get list of all teachers. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/teachers/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "teachers", "1"]
+						},
+						"description": "Get teacher by ID. Requires authentication."
+					},
+					"response": []
+				},
+				{
 					"name": "Create Teacher",
 					"request": {
 						"method": "POST",
@@ -288,16 +317,81 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "teachers"]
 						},
-						"description": "Create new teacher. Requires TEACHER role authentication."
+						"description": "Create new teacher. Requires TEACHER or ADMIN role authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Teacher",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Prof. Jane Doe Updated\",\n  \"employeeId\": \"EMP001\",\n  \"email\": \"jane.doe@mitaoe.ac.in\",\n  \"phone\": \"9876543210\",\n  \"weeklyHoursLimit\": 30,\n  \"specialization\": \"Data Structures, Algorithms, AI\",\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/teachers/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "teachers", "1"]
+						},
+						"description": "Update existing teacher. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Teacher",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/teachers/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "teachers", "1"]
+						},
+						"description": "Delete teacher by ID. Requires authentication."
 					},
 					"response": []
 				}
 			],
-			"description": "Teacher management endpoints"
+			"description": "Teacher management endpoints - Full CRUD operations"
 		},
 		{
 			"name": "Departments (Admin)",
 			"item": [
+				{
+					"name": "Get All Departments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/departments",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "departments"]
+						},
+						"description": "Get list of all departments. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Department by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/departments/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "departments", "1"]
+						},
+						"description": "Get department by ID. Requires ADMIN role."
+					},
+					"response": []
+				},
 				{
 					"name": "Create Department",
 					"request": {
@@ -322,25 +416,76 @@
 					"response": []
 				},
 				{
-					"name": "Get All Departments",
+					"name": "Update Department",
 					"request": {
-						"method": "GET",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Computer Science & Engineering\",\n  \"code\": \"CSE\",\n  \"headOfDepartment\": \"Dr. John Smith\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/departments/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "departments", "1"]
+						},
+						"description": "Update existing department. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Department",
+					"request": {
+						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/admin/api/departments",
+							"raw": "{{base_url}}/admin/api/departments/1",
 							"host": ["{{base_url}}"],
-							"path": ["admin", "api", "departments"]
+							"path": ["admin", "api", "departments", "1"]
 						},
-						"description": "Get list of all departments. Requires ADMIN role."
+						"description": "Delete department by ID. Requires ADMIN role."
 					},
 					"response": []
 				}
 			],
-			"description": "Department management endpoints (Admin only)"
+			"description": "Department management endpoints - Full CRUD operations (Admin only)"
 		},
 		{
 			"name": "Courses (Admin)",
 			"item": [
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/courses",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "courses"]
+						},
+						"description": "Get list of all courses. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/courses/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "courses", "1"]
+						},
+						"description": "Get course by ID. Requires ADMIN role."
+					},
+					"response": []
+				},
 				{
 					"name": "Create Course",
 					"request": {
@@ -363,13 +508,78 @@
 						"description": "Create new course. Requires ADMIN role."
 					},
 					"response": []
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Advanced Data Structures\",\n  \"code\": \"CS201\",\n  \"courseType\": \"THEORY\",\n  \"credits\": 4,\n  \"hoursPerWeek\": 5,\n  \"semester\": \"SEM_3\",\n  \"description\": \"Advanced concepts in data structures\",\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/courses/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "courses", "1"]
+						},
+						"description": "Update existing course. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/courses/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "courses", "1"]
+						},
+						"description": "Delete course by ID. Requires ADMIN role."
+					},
+					"response": []
 				}
 			],
-			"description": "Course management endpoints (Admin only)"
+			"description": "Course management endpoints - Full CRUD operations (Admin only)"
 		},
 		{
 			"name": "Rooms (Admin)",
 			"item": [
+				{
+					"name": "Get All Rooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/rooms",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "rooms"]
+						},
+						"description": "Get list of all rooms. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Room by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/rooms/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "rooms", "1"]
+						},
+						"description": "Get room by ID. Requires ADMIN role."
+					},
+					"response": []
+				},
 				{
 					"name": "Create Room",
 					"request": {
@@ -392,13 +602,92 @@
 						"description": "Create new room/classroom. Requires ADMIN role."
 					},
 					"response": []
+				},
+				{
+					"name": "Update Room",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"CS Lab 1 - Updated\",\n  \"roomNumber\": \"CS-101\",\n  \"capacity\": 70,\n  \"roomType\": \"LAB\",\n  \"hasProjector\": true,\n  \"hasAc\": true,\n  \"equipment\": \"70 computers, projector, whiteboard, smart board\",\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/rooms/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "rooms", "1"]
+						},
+						"description": "Update existing room. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Room",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/rooms/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "rooms", "1"]
+						},
+						"description": "Delete room by ID. Requires ADMIN role."
+					},
+					"response": []
 				}
 			],
-			"description": "Room/Classroom management endpoints (Admin only)"
+			"description": "Room/Classroom management endpoints - Full CRUD operations (Admin only)"
 		},
 		{
 			"name": "Academic Years (Admin)",
 			"item": [
+				{
+					"name": "Get All Academic Years",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/academic-years",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "academic-years"]
+						},
+						"description": "Get list of all academic years. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Academic Year by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/academic-years/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "academic-years", "1"]
+						},
+						"description": "Get academic year by ID. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Academic Year",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/academic-years/current",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "academic-years", "current"]
+						},
+						"description": "Get current active academic year. Requires ADMIN role."
+					},
+					"response": []
+				},
 				{
 					"name": "Create Academic Year",
 					"request": {
@@ -421,13 +710,92 @@
 						"description": "Create new academic year. Requires ADMIN role."
 					},
 					"response": []
+				},
+				{
+					"name": "Update Academic Year",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"yearName\": \"2024-25 Updated\",\n  \"startDate\": \"2024-07-01\",\n  \"endDate\": \"2025-06-30\",\n  \"isCurrent\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/academic-years/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "academic-years", "1"]
+						},
+						"description": "Update existing academic year. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Academic Year",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/academic-years/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "academic-years", "1"]
+						},
+						"description": "Delete academic year by ID. Requires ADMIN role."
+					},
+					"response": []
 				}
 			],
-			"description": "Academic year management endpoints (Admin only)"
+			"description": "Academic year management endpoints - Full CRUD operations (Admin only)"
 		},
 		{
 			"name": "Divisions (Admin)",
 			"item": [
+				{
+					"name": "Get All Divisions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/divisions",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "divisions"]
+						},
+						"description": "Get list of all divisions. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Division by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/divisions/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "divisions", "1"]
+						},
+						"description": "Get division by ID. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Divisions by Academic Year",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/divisions/academic-year/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "divisions", "academic-year", "1"]
+						},
+						"description": "Get divisions for specific academic year. Requires ADMIN role."
+					},
+					"response": []
+				},
 				{
 					"name": "Create Division",
 					"request": {
@@ -450,9 +818,177 @@
 						"description": "Create new division/class. Requires ADMIN role."
 					},
 					"response": []
+				},
+				{
+					"name": "Update Division",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"A\",\n  \"year\": 2,\n  \"branch\": \"Computer Science\",\n  \"totalStudents\": 65,\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  },\n  \"academicYear\": {\n    \"id\": 1\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/divisions/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "divisions", "1"]
+						},
+						"description": "Update existing division. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Division",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/divisions/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "divisions", "1"]
+						},
+						"description": "Delete division by ID. Requires ADMIN role."
+					},
+					"response": []
 				}
 			],
-			"description": "Division/Class management endpoints (Admin only)"
+			"description": "Division/Class management endpoints - Full CRUD operations (Admin only)"
+		},
+		{
+			"name": "Time Slots (Admin)",
+			"item": [
+				{
+					"name": "Get All Time Slots",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots"]
+						},
+						"description": "Get list of all time slots. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Time Slot by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots", "1"]
+						},
+						"description": "Get time slot by ID. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Time Slots",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots/active",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots", "active"]
+						},
+						"description": "Get only active time slots. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Time Slot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slotName\": \"Period 1\",\n  \"startTime\": \"09:00:00\",\n  \"endTime\": \"10:00:00\",\n  \"isBreak\": false,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots"]
+						},
+						"description": "Create new time slot. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Break Time Slot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slotName\": \"Break\",\n  \"startTime\": \"11:00:00\",\n  \"endTime\": \"11:15:00\",\n  \"isBreak\": true,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots"]
+						},
+						"description": "Create break time slot. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Time Slot",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slotName\": \"Period 1 - Updated\",\n  \"startTime\": \"09:00:00\",\n  \"endTime\": \"10:00:00\",\n  \"isBreak\": false,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots", "1"]
+						},
+						"description": "Update existing time slot. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Time Slot",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots", "1"]
+						},
+						"description": "Delete time slot by ID. Requires ADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Time Slot management endpoints - Full CRUD operations (Admin only)"
 		}
 	]
 }
