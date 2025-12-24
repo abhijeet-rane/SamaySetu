@@ -27,37 +27,41 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimeSlot {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@NotNull(message = "Start time is required")
 	@Column(name = "start_time", nullable = false)
 	private LocalTime startTime;
-	
+
 	@NotNull(message = "End time is required")
 	@Column(name = "end_time", nullable = false)
 	private LocalTime endTime;
-	
+
 	@Min(value = 1, message = "Duration must be at least 1 minute")
 	@Column(name = "duration_minutes", nullable = false)
 	private Integer durationMinutes;
-	
+
 	@Size(max = 50)
 	@Column(name = "slot_name")
 	private String slotName;
-	
+
 	@Column(name = "is_break")
 	private Boolean isBreak = false;
-	
+
 	@Column(name = "is_active")
 	private Boolean isActive = true;
-	
+
+	@Size(max = 20)
+	@Column(name = "type")
+	private String type = "TYPE_1";
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Timestamp createdAt;
-	
+
 	// Relationships
 	@OneToMany(mappedBy = "timeSlot", cascade = CascadeType.ALL)
 	private List<TimetableEntry> timetableEntries;

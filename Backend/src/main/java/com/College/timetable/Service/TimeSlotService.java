@@ -17,6 +17,20 @@ public class TimeSlotService {
 	private TimeSlot_repo timeSlotRepo;
 	
 	public TimeSlot add(TimeSlot timeSlot) {
+		// Check for overlapping slots in the same type
+		List<TimeSlot> overlapping = timeSlotRepo.findOverlappingSlotsForNew(
+			timeSlot.getType(), 
+			timeSlot.getStartTime(), 
+			timeSlot.getEndTime()
+		);
+		
+		if (!overlapping.isEmpty()) {
+			throw new IllegalArgumentException("Time slot overlaps with existing slot: " + 
+				overlapping.get(0).getSlotName() + " (" + 
+				overlapping.get(0).getStartTime() + " - " + 
+				overlapping.get(0).getEndTime() + ")");
+		}
+		
 		return timeSlotRepo.save(timeSlot);
 	}
 	
@@ -31,13 +45,34 @@ public class TimeSlotService {
 	
 	public TimeSlot update(Long id, TimeSlot timeSlot) {
 		TimeSlot existing = getById(id);
+		
+		// Check for overlapping slots (excluding current slot)
+		List<TimeSlot> overlapping = timeSlotRepo.findOverlappingSlots(
+			timeSlot.getType(), 
+			timeSlot.getStartTime(), 
+			timeSlot.getEndTime(),
+			id
+		);
+		
+		if (!overlapping.isEmpty()) {
+			throw new IllegalArgumentException("Time slot overlaps with existing slot: " + 
+				overlapping.get(0).getSlotName() + " (" + 
+				overlapping.get(0).getStartTime() + " - " + 
+				overlapping.get(0).getEndTime() + ")");
+		}
+		
 		existing.setStartTime(timeSlot.getStartTime());
 		existing.setEndTime(timeSlot.getEndTime());
 		existing.setDurationMinutes(timeSlot.getDurationMinutes());
 		existing.setSlotName(timeSlot.getSlotName());
 		existing.setIsBreak(timeSlot.getIsBreak());
 		existing.setIsActive(timeSlot.getIsActive());
+		existing.setType(timeSlot.getType());
 		return timeSlotRepo.save(existing);
+	}
+	
+	public List<TimeSlot> getByType(String type) {
+		return timeSlotRepo.findByType(type);
 	}
 	
 	public void delete(Long id) {

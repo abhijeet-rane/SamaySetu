@@ -58,6 +58,9 @@ public class DivisionService {
 		existing.setBranch(division.getBranch());
 		existing.setTotalStudents(division.getTotalStudents());
 		existing.setIsActive(division.getIsActive());
+		existing.setTimeSlotType(division.getTimeSlotType());
+		existing.setClassTeacher(division.getClassTeacher());
+		existing.setClassRepresentative(division.getClassRepresentative());
 		
 		// Update academic year if provided
 		if (division.getAcademicYear() != null && division.getAcademicYear().getId() != null) {

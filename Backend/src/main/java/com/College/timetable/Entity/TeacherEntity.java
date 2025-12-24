@@ -63,10 +63,18 @@ public class TeacherEntity implements UserDetails{
 	@Size(max = 15)
 	private String phone;
 	
-	@Min(value = 1, message = "Weekly hours must be at least 1")
-	@Max(value = 40, message = "Weekly hours cannot exceed 40")
-	@Column(name = "weekly_hours_limit")
-	private Integer weeklyHoursLimit = 25;
+	@Min(value = 1, message = "Minimum weekly hours must be at least 1")
+	@Max(value = 40, message = "Minimum weekly hours cannot exceed 40")
+	@Column(name = "min_weekly_hours")
+	private Integer minWeeklyHours = 10;
+	
+	@Min(value = 1, message = "Maximum weekly hours must be at least 1")
+	@Max(value = 50, message = "Maximum weekly hours cannot exceed 50")
+	@Column(name = "max_weekly_hours")
+	private Integer maxWeeklyHours = 30;
+	
+	@Column(name = "is_first_login")
+	private Boolean isFirstLogin = true;
 	
 	@Column(columnDefinition = "TEXT")
 	private String specialization;

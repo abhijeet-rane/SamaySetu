@@ -11,25 +11,33 @@ export const Input: React.FC<InputProps> = ({
   error,
   icon,
   className = '',
+  disabled,
   ...props
 }) => {
   return (
     <div className="mb-4">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className={`block text-sm font-medium mb-2 ${
+          disabled ? 'text-gray-500' : 'text-gray-700'
+        }`}>
           {label}
         </label>
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <div className={`absolute left-3 top-1/2 -translate-y-1/2 ${
+            disabled ? 'text-gray-300' : 'text-gray-400'
+          }`}>
             {icon}
           </div>
         )}
         <input
           className={`input-field ${icon ? 'pl-10' : ''} ${
             error ? 'input-error' : ''
+          } ${
+            disabled ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' : ''
           } ${className}`}
+          disabled={disabled}
           {...props}
         />
       </div>

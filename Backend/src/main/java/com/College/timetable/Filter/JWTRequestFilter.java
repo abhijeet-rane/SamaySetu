@@ -32,10 +32,10 @@ public class JWTRequestFilter extends OncePerRequestFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		
 	    String path = request.getServletPath();
 
+		// Skip JWT processing for auth endpoints
 		if (path.startsWith("/auth")) {
 	        filterChain.doFilter(request, response);
 	        return;
@@ -47,16 +47,28 @@ public class JWTRequestFilter extends OncePerRequestFilter{
 		
 		if(authHeader!=null && authHeader.startsWith("Bearer ")) {
 			jwt=authHeader.substring(7);
-			email=jwtUtil.extractUsername(jwt);
+			try {
+				email=jwtUtil.extractUsername(jwt);
+			} catch (Exception e) {
+				// Handle expired or invalid JWT tokens gracefully
+				// Let the request continue without authentication
+				filterChain.doFilter(request, response);
+				return;
+			}
 		}
 		
 		if(email!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
-			 UserDetails userdet=teacher.loadUserByUsername(email); 
-			 if(jwtUtil.validateToken(jwt, userdet)) {
-				 UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(userdet, null, userdet.getAuthorities());
-				 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-			 }
+			try {
+				UserDetails userdet=teacher.loadUserByUsername(email); 
+				if(jwtUtil.validateToken(jwt, userdet)) {
+					UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(userdet, null, userdet.getAuthorities());
+					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+				}
+			} catch (Exception e) {
+				// Handle any authentication errors gracefully
+				// Let the request continue without authentication
+			}
 		}
 		filterChain.doFilter(request, response);
 	} 	

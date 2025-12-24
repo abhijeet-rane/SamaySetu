@@ -16,6 +16,7 @@ public class AcadamicService {
 	@Autowired
 	private Acadamic_repo acadamy;
 
+	@org.springframework.cache.annotation.CacheEvict(value = "academic-years", allEntries = true)
 	public AcademicYear addAcadamic(AcademicYear aca) {
 		// If this academic year is being set as current, unset any existing current year
 		if (aca.getIsCurrent() != null && aca.getIsCurrent()) {
@@ -27,15 +28,18 @@ public class AcadamicService {
 		return acadamy.save(aca);
 	}
 	
+	@org.springframework.cache.annotation.Cacheable("academic-years")
 	public List<AcademicYear> getAll() {
 		return acadamy.findAll();
 	}
 	
+	@org.springframework.cache.annotation.Cacheable(value = "academic-years", key = "#id")
 	public AcademicYear getById(Long id) {
 		return acadamy.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("Academic year not found with id: " + id));
 	}
 	
+	@org.springframework.cache.annotation.CacheEvict(value = "academic-years", allEntries = true)
 	public AcademicYear update(Long id, AcademicYear aca) {
 		AcademicYear existing = getById(id);
 		
@@ -54,6 +58,7 @@ public class AcadamicService {
 		return acadamy.save(existing);
 	}
 	
+	@org.springframework.cache.annotation.CacheEvict(value = "academic-years", allEntries = true)
 	public void delete(Long id) {
 		if (!acadamy.existsById(id)) {
 			throw new EntityNotFoundException("Academic year not found with id: " + id);

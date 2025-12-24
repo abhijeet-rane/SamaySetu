@@ -66,6 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
             )}
             <div className="flex items-center gap-3">
               <img src={logo} alt="MIT AOE" className="h-10" />
+              <div className="h-8 w-px bg-gray-300"></div>
               <div>
                 <h1 className="text-xl font-bold text-primary-900">SamaySetu</h1>
                 <p className="text-xs text-gray-600">MIT Academy of Engineering</p>

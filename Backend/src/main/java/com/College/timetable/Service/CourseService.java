@@ -50,6 +50,7 @@ public class CourseService {
 		existing.setDescription(c.getDescription());
 		existing.setPrerequisites(c.getPrerequisites());
 		existing.setIsActive(c.getIsActive());
+		existing.setYear(c.getYear());
 		
 		// Update department if provided
 		if (c.getDepartment() != null && c.getDepartment().getId() != null) {

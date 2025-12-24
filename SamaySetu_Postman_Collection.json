@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "samaysetu-api-collection-v2",
-		"name": "SamaySetu Timetable API - Complete",
-		"description": "Complete API collection for SamaySetu Timetable Management System with Authentication, Email Verification, and Full CRUD operations for all 7 entities. Updated: December 2024",
+		"_postman_id": "samaysetu-api-collection-v3",
+		"name": "SamaySetu Timetable API - Complete v3.0",
+		"description": "Complete API collection for SamaySetu Timetable Management System with Authentication, Email Verification, Academic Year Separation, Staff Management, and Full CRUD operations. Updated: December 2024",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"version": "2.0.0"
+		"version": "3.0.0"
 	},
 	"auth": {
 		"type": "bearer",
@@ -439,6 +439,20 @@
 					"response": []
 				},
 				{
+					"name": "Get Departments by Academic Year",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/departments/academic-year/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "departments", "academic-year", "1"]
+						},
+						"description": "Get departments for specific academic year. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
 					"name": "Get Department by ID",
 					"request": {
 						"method": "GET",
@@ -464,14 +478,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Computer Science\",\n  \"code\": \"CS\",\n  \"headOfDepartment\": \"Dr. John Smith\"\n}"
+							"raw": "{\n  \"name\": \"Computer Engineering\",\n  \"code\": \"COMP\",\n  \"headOfDepartment\": \"Dr. John Smith\",\n  \"years\": \"1,2,3,4\",\n  \"academicYear\": {\n    \"id\": 1\n  }\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/api/departments",
 							"host": ["{{base_url}}"],
 							"path": ["admin", "api", "departments"]
 						},
-						"description": "Create new department. Requires ADMIN role."
+						"description": "Create new department for specific academic year. Requires ADMIN role."
 					},
 					"response": []
 				},
@@ -487,7 +501,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Computer Science & Engineering\",\n  \"code\": \"CSE\",\n  \"headOfDepartment\": \"Dr. John Smith\"\n}"
+							"raw": "{\n  \"name\": \"Computer Science & Engineering\",\n  \"code\": \"CSE\",\n  \"headOfDepartment\": \"Dr. John Smith\",\n  \"years\": \"1,2,3,4\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/api/departments/1",
@@ -495,6 +509,29 @@
 							"path": ["admin", "api", "departments", "1"]
 						},
 						"description": "Update existing department. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Copy Departments to Academic Year",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sourceAcademicYearId\": 1,\n  \"targetAcademicYearId\": 2,\n  \"departmentIds\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/departments/copy",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "departments", "copy"]
+						},
+						"description": "Copy selected departments from one academic year to another. Requires ADMIN role."
 					},
 					"response": []
 				},
@@ -513,7 +550,7 @@
 					"response": []
 				}
 			],
-			"description": "Department management endpoints - Full CRUD operations (Admin only)"
+			"description": "Department management endpoints with academic year separation - Full CRUD operations (Admin only)"
 		},
 		{
 			"name": "Courses (Admin)",
@@ -558,14 +595,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Data Structures\",\n  \"code\": \"CS201\",\n  \"courseType\": \"THEORY\",\n  \"credits\": 4,\n  \"hoursPerWeek\": 4,\n  \"semester\": \"SEM_3\",\n  \"description\": \"Introduction to data structures\",\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  }\n}"
+							"raw": "{\n  \"name\": \"Data Structures\",\n  \"code\": \"CS201\",\n  \"courseType\": \"THEORY\",\n  \"credits\": 4,\n  \"hoursPerWeek\": 4,\n  \"semester\": \"SEM_3\",\n  \"year\": 2,\n  \"description\": \"Introduction to data structures\",\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  }\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/api/courses",
 							"host": ["{{base_url}}"],
 							"path": ["admin", "api", "courses"]
 						},
-						"description": "Create new course. Requires ADMIN role."
+						"description": "Create new course with year and semester. Requires ADMIN role."
 					},
 					"response": []
 				},
@@ -868,14 +905,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"A\",\n  \"year\": 2,\n  \"branch\": \"Computer Science\",\n  \"totalStudents\": 60,\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  },\n  \"academicYear\": {\n    \"id\": 1\n  }\n}"
+							"raw": "{\n  \"name\": \"A\",\n  \"year\": 2,\n  \"branch\": \"Computer Science\",\n  \"totalStudents\": 60,\n  \"timeSlotType\": \"TYPE_1\",\n  \"classTeacher\": \"Prof. Jane Smith\",\n  \"classRepresentative\": \"John Doe\",\n  \"isActive\": true,\n  \"department\": {\n    \"id\": 1\n  },\n  \"academicYear\": {\n    \"id\": 1\n  }\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/api/divisions",
 							"host": ["{{base_url}}"],
 							"path": ["admin", "api", "divisions"]
 						},
-						"description": "Create new division/class. Requires ADMIN role."
+						"description": "Create new division/class with class teacher and CR. Requires ADMIN role."
 					},
 					"response": []
 				},
@@ -976,14 +1013,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"slotName\": \"Period 1\",\n  \"startTime\": \"09:00:00\",\n  \"endTime\": \"10:00:00\",\n  \"isBreak\": false,\n  \"isActive\": true\n}"
+							"raw": "{\n  \"slotName\": \"Period 1\",\n  \"startTime\": \"09:00:00\",\n  \"endTime\": \"10:00:00\",\n  \"type\": \"TYPE_1\",\n  \"isBreak\": false,\n  \"isActive\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/api/time-slots",
 							"host": ["{{base_url}}"],
 							"path": ["admin", "api", "time-slots"]
 						},
-						"description": "Create new time slot. Requires ADMIN role."
+						"description": "Create new time slot with type (TYPE_1 or TYPE_2). Requires ADMIN role."
 					},
 					"response": []
 				},
@@ -999,14 +1036,28 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"slotName\": \"Break\",\n  \"startTime\": \"11:00:00\",\n  \"endTime\": \"11:15:00\",\n  \"isBreak\": true,\n  \"isActive\": true\n}"
+							"raw": "{\n  \"slotName\": \"Lunch Break\",\n  \"startTime\": \"12:00:00\",\n  \"endTime\": \"13:00:00\",\n  \"type\": \"TYPE_2\",\n  \"isBreak\": true,\n  \"isActive\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/api/time-slots",
 							"host": ["{{base_url}}"],
 							"path": ["admin", "api", "time-slots"]
 						},
-						"description": "Create break time slot. Requires ADMIN role."
+						"description": "Create break time slot with different type for overlapping schedules. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Time Slots by Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/time-slots/type/TYPE_1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "time-slots", "type", "TYPE_1"]
+						},
+						"description": "Get time slots by type (TYPE_1 or TYPE_2). Requires ADMIN role."
 					},
 					"response": []
 				},
@@ -1048,7 +1099,393 @@
 					"response": []
 				}
 			],
-			"description": "Time Slot management endpoints - Full CRUD operations (Admin only)"
+			"description": "Time Slot management endpoints with type support - Full CRUD operations (Admin only)"
+		},
+		{
+			"name": "Batches (Admin)",
+			"item": [
+				{
+					"name": "Get All Batches",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/batches",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "batches"]
+						},
+						"description": "Get list of all batches. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Batch by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/batches/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "batches", "1"]
+						},
+						"description": "Get batch by ID. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Batches by Division",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/batches/division/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "batches", "division", "1"]
+						},
+						"description": "Get batches for specific division. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Batch",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"B1\",\n  \"division\": {\n    \"id\": 1\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/batches",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "batches"]
+						},
+						"description": "Create new batch for a division. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Batch",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"B1-Updated\",\n  \"division\": {\n    \"id\": 1\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/api/batches/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "batches", "1"]
+						},
+						"description": "Update existing batch. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Batch",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/api/batches/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "api", "batches", "1"]
+						},
+						"description": "Delete batch by ID. Requires ADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Batch management endpoints - Full CRUD operations (Admin only)"
+		},
+		{
+			"name": "Staff Management (Admin)",
+			"item": [
+				{
+					"name": "Get Pending Staff Approvals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/teachers/pending-approvals",
+							"host": ["{{base_url}}"],
+							"path": ["api", "teachers", "pending-approvals"]
+						},
+						"description": "Get list of staff pending approval. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Staff",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/teachers/1/approve",
+							"host": ["{{base_url}}"],
+							"path": ["api", "teachers", "1", "approve"]
+						},
+						"description": "Approve staff member. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Staff",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"Incomplete documentation\""
+						},
+						"url": {
+							"raw": "{{base_url}}/api/teachers/1/reject",
+							"host": ["{{base_url}}"],
+							"path": ["api", "teachers", "1", "reject"]
+						},
+						"description": "Reject staff member with reason. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Staff CSV",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/staff.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/upload-staff",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "upload-staff"]
+						},
+						"description": "Bulk upload staff via CSV file. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Download Staff Template",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/download-staff-template",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "download-staff-template"]
+						},
+						"description": "Download CSV template for staff upload. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Staff Manually",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Prof. John Doe\",\n  \"employeeId\": \"EMP123\",\n  \"email\": \"john.doe@mitaoe.ac.in\",\n  \"phone\": \"9876543210\",\n  \"specialization\": \"Computer Science\",\n  \"departmentId\": 1,\n  \"weeklyHoursLimit\": 25\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/create-staff",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "create-staff"]
+						},
+						"description": "Create staff manually with default password. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Staff",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Prof. John Doe Updated\",\n  \"phone\": \"9876543210\",\n  \"specialization\": \"AI & Machine Learning\",\n  \"weeklyHoursLimit\": 30,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/update-staff/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "update-staff", "1"]
+						},
+						"description": "Update staff information. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Courses CSV",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/courses.csv"
+								},
+								{
+									"key": "departmentId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "year",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/upload-courses",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "upload-courses"]
+						},
+						"description": "Bulk upload courses via CSV file for specific department and year. Requires ADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Download Courses Template",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/download-courses-template",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "download-courses-template"]
+						},
+						"description": "Download CSV template for courses upload. Requires ADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Staff management and bulk operations endpoints (Admin only)"
+		},
+		{
+			"name": "Staff Profile",
+			"item": [
+				{
+					"name": "Get Staff Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/staff/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "staff", "profile"]
+						},
+						"description": "Get current staff member's profile. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Staff Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"9876543210\",\n  \"specialization\": \"Updated Specialization\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/staff/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "staff", "profile"]
+						},
+						"description": "Update staff profile (restricted fields only). Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Change Staff Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"oldPassword123\",\n  \"newPassword\": \"newPassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/staff/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "staff", "change-password"]
+						},
+						"description": "Change staff password. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Change First Time Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"staff@mitaoe.ac.in\",\n  \"currentPassword\": \"mitaoe@123\",\n  \"newPassword\": \"newPassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/change-first-password",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "change-first-password"]
+						},
+						"description": "Change password on first login for admin-created staff."
+					},
+					"response": []
+				}
+			],
+			"description": "Staff profile management endpoints"
 		}
 	]
 }

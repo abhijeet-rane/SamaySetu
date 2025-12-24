@@ -79,9 +79,11 @@ public class TeacherService implements UserDetailsService{
 		newTeacher.setIsActive(false); // Inactive until email verified and admin approved
 		newTeacher.setIsEmailVerified(false);
 		newTeacher.setIsApproved(false); // Requires admin approval after email verification
+		newTeacher.setIsFirstLogin(false); // Self-registered users don't need to change password
 		newTeacher.setVerificationToken(verificationToken);
 		newTeacher.setVerificationTokenExpiry(Timestamp.valueOf(LocalDateTime.now().plusHours(24)));
-		newTeacher.setWeeklyHoursLimit(25);
+		newTeacher.setMinWeeklyHours(10);
+		newTeacher.setMaxWeeklyHours(30);
 		
 		// Set department if provided
 		if (request.getDepartmentId() != null) {
@@ -148,19 +150,29 @@ public class TeacherService implements UserDetailsService{
 	
 	public void resetPassword(String token, String newPassword) {
 		TeacherEntity teacherEntity = teacher.findByPasswordResetToken(token)
-			.orElseThrow(() -> new RuntimeException("Invalid password reset token"));
+			.orElseThrow(() -> new RuntimeException("Invalid or expired reset link. Please request a new password reset."));
 		
 		// Check if token expired
 		if (teacherEntity.getPasswordResetTokenExpiry().before(new Timestamp(System.currentTimeMillis()))) {
-			throw new RuntimeException("Password reset token has expired");
+			throw new RuntimeException("Reset link has expired. Please request a new password reset.");
 		}
 		
-		// Reset password
+		// Update password and clear reset token
 		teacherEntity.setPassword(passEncode.encode(newPassword));
 		teacherEntity.setPasswordResetToken(null);
 		teacherEntity.setPasswordResetTokenExpiry(null);
 		
 		teacher.save(teacherEntity);
+	}
+	
+	public void validateResetToken(String token) {
+		TeacherEntity teacherEntity = teacher.findByPasswordResetToken(token)
+			.orElseThrow(() -> new RuntimeException("Invalid or expired reset link. Please request a new password reset."));
+		
+		// Check if token expired
+		if (teacherEntity.getPasswordResetTokenExpiry().before(new Timestamp(System.currentTimeMillis()))) {
+			throw new RuntimeException("Reset link has expired. Please request a new password reset.");
+		}
 	}
 	
 	@Override
@@ -191,6 +203,28 @@ public class TeacherService implements UserDetailsService{
 		
 	}
 	
+	public boolean isFirstLogin(String email) {
+		TeacherEntity teach = teacher.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+		// Handle null values for existing users (default to false for existing users)
+		return teach.getIsFirstLogin() != null ? teach.getIsFirstLogin() : false;
+	}
+	
+	public void updateFirstLoginPassword(String email, String newPassword) {
+		TeacherEntity teach = teacher.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		// Handle null values for existing users
+		Boolean isFirstLogin = teach.getIsFirstLogin();
+		if (isFirstLogin == null || !isFirstLogin) {
+			throw new RuntimeException("Password change not required");
+		}
+		
+		teach.setPassword(passEncode.encode(newPassword));
+		teach.setIsFirstLogin(false);
+		teacher.save(teach);
+	}
+	
 	public String getByRole(String email) {
 		TeacherEntity teach = teacher.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -217,7 +251,8 @@ public class TeacherService implements UserDetailsService{
 		existing.setEmployeeId(request.getEmployeeId());
 		existing.setEmail(request.getEmail());
 		existing.setPhone(request.getPhone());
-		existing.setWeeklyHoursLimit(request.getWeeklyHoursLimit());
+		existing.setMinWeeklyHours(request.getMinWeeklyHours());
+		existing.setMaxWeeklyHours(request.getMaxWeeklyHours());
 		existing.setSpecialization(request.getSpecialization());
 		
 		// Update password only if provided
@@ -235,13 +270,47 @@ public class TeacherService implements UserDetailsService{
 		return teacher.save(existing);
 	}
 	
+	public TeacherEntity updateStaffProfile(String email, com.College.timetable.IO.StaffProfileUpdateRequest request) {
+		TeacherEntity existing = getByEmail(email);
+		
+		// Only allow editing of specific fields for staff (name is NOT editable)
+		existing.setPhone(request.getPhone());
+		existing.setSpecialization(request.getSpecialization());
+		
+		return teacher.save(existing);
+	}
+	
+	public void changePassword(String email, String currentPassword, String newPassword) {
+		TeacherEntity existing = getByEmail(email);
+		
+		// Verify current password
+		if (!passEncode.matches(currentPassword, existing.getPassword())) {
+			throw new RuntimeException("Current password is incorrect");
+		}
+		
+		// Validate new password
+		if (newPassword == null || newPassword.length() < 6) {
+			throw new RuntimeException("New password must be at least 6 characters");
+		}
+		
+		// Don't allow same password
+		if (passEncode.matches(newPassword, existing.getPassword())) {
+			throw new RuntimeException("New password must be different from current password");
+		}
+		
+		// Update password
+		existing.setPassword(passEncode.encode(newPassword));
+		teacher.save(existing);
+	}
+	
 	public TeacherEntity update(Long id, TeacherEntity teach) {
 		TeacherEntity existing = getById(id);
 		existing.setName(teach.getName());
 		existing.setEmployeeId(teach.getEmployeeId());
 		existing.setEmail(teach.getEmail());
 		existing.setPhone(teach.getPhone());
-		existing.setWeeklyHoursLimit(teach.getWeeklyHoursLimit());
+		existing.setMinWeeklyHours(teach.getMinWeeklyHours());
+		existing.setMaxWeeklyHours(teach.getMaxWeeklyHours());
 		existing.setSpecialization(teach.getSpecialization());
 		existing.setIsActive(teach.getIsActive());
 		

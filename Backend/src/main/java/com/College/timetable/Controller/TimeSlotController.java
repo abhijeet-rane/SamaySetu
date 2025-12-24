@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.College.timetable.Entity.TimeSlot;
@@ -32,9 +33,13 @@ public class TimeSlotController {
 	
 	// Admin endpoints
 	@PostMapping("/admin/api/time-slots")
-	public ResponseEntity<TimeSlot> addTimeSlot(@Valid @RequestBody TimeSlot timeSlot) {
-		TimeSlot saved = timeSlotService.add(timeSlot);
-		return ResponseEntity.ok(saved);
+	public ResponseEntity<?> addTimeSlot(@Valid @RequestBody TimeSlot timeSlot) {
+		try {
+			TimeSlot saved = timeSlotService.add(timeSlot);
+			return ResponseEntity.ok(saved);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 	
 	@GetMapping("/admin/api/time-slots")
@@ -47,10 +52,19 @@ public class TimeSlotController {
 		return ResponseEntity.ok(timeSlotService.getById(id));
 	}
 	
+	@GetMapping("/admin/api/time-slots/type/{type}")
+	public ResponseEntity<List<TimeSlot>> getTimeSlotsByType(@PathVariable String type) {
+		return ResponseEntity.ok(timeSlotService.getByType(type));
+	}
+	
 	@PutMapping("/admin/api/time-slots/{id}")
-	public ResponseEntity<TimeSlot> updateTimeSlot(@PathVariable Long id, @Valid @RequestBody TimeSlot timeSlot) {
-		TimeSlot updated = timeSlotService.update(id, timeSlot);
-		return ResponseEntity.ok(updated);
+	public ResponseEntity<?> updateTimeSlot(@PathVariable Long id, @Valid @RequestBody TimeSlot timeSlot) {
+		try {
+			TimeSlot updated = timeSlotService.update(id, timeSlot);
+			return ResponseEntity.ok(updated);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 	
 	@DeleteMapping("/admin/api/time-slots/{id}")

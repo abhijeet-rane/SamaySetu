@@ -76,6 +76,10 @@ public class CourseEntity {
 	@Column(columnDefinition = "TEXT")
 	private String prerequisites;
 	
+	// Year (1=FY, 2=SY, 3=TY, 4=BTech)
+	@Column(name = "year")
+	private Integer year;
+	
 	@Column(name = "is_active")
 	private Boolean isActive = true;
 	

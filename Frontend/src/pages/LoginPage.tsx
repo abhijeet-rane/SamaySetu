@@ -12,7 +12,11 @@ import bannerVideo from '../assets/banner_video1.mp4';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const { login, rememberMe, setRememberMe } = useAuthStore((state) => ({
+    login: state.login,
+    rememberMe: state.rememberMe,
+    setRememberMe: state.setRememberMe,
+  }));
   
   const [formData, setFormData] = useState({
     email: '',
@@ -55,21 +59,28 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await authAPI.login(formData);
-      const { email, token, role } = response.data;
+      const { email, token, role, firstLogin } = response.data;
+      
+      // Check if first login
+      if (firstLogin) {
+        toast.success('Welcome! Please set a new password.');
+        navigate('/change-first-password', { state: { email } });
+        return;
+      }
       
       // Store token first so subsequent API calls work
-      login({ email, token, role, name: '' });
+      login({ email, token, role, name: '' }, rememberMe);
       
       // Fetch full profile data to get real name
       try {
         const profileResponse = await teacherAPI.getProfile();
         const profileData = profileResponse.data;
         // Update with real name from profile
-        login({ email, token, role, name: profileData.name || email.split('@')[0] });
+        login({ email, token, role, name: profileData.name || email.split('@')[0] }, rememberMe);
       } catch (profileError) {
         // If profile fetch fails, use email as fallback
         const name = email.split('@')[0].replace(/\./g, ' ').replace(/\d+/g, '').trim();
-        login({ email, token, role, name });
+        login({ email, token, role, name }, rememberMe);
       }
       
       toast.success('Login successful!');
@@ -90,7 +101,29 @@ export const LoginPage: React.FC = () => {
         const status = error.response.status;
         const data = error.response.data;
         
-        if (status === 401) {
+        if (status === 400) {
+          // Handle 400 Bad Request errors
+          if (typeof data === 'string') {
+            if (data.includes('Email or password is incorrect')) {
+              message = 'Incorrect email or password. Please try again.';
+              fieldErrors.email = 'Check your credentials';
+              fieldErrors.password = 'Check your credentials';
+            } else if (data.includes('Email not verified')) {
+              message = 'Please verify your email before logging in.';
+              fieldErrors.email = 'Email not verified';
+            } else if (data.includes('pending admin approval')) {
+              message = 'Your account is pending admin approval.';
+              fieldErrors.email = 'Pending approval';
+            } else if (data.includes('not active')) {
+              message = 'Your account is not active. Contact administrator.';
+              fieldErrors.email = 'Account inactive';
+            } else {
+              message = data;
+            }
+          } else if (data.message) {
+            message = data.message;
+          }
+        } else if (status === 401) {
           message = 'Incorrect password. Please try again.';
           fieldErrors.password = 'Incorrect password';
         } else if (status === 404) {
@@ -221,9 +254,24 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-2 rounded" />
-                <span className="text-gray-600">Remember me</span>
+              <label className="flex items-center cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="mr-2 rounded border-gray-300 text-primary-600 focus:ring-primary-500" 
+                />
+                <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+                  Remember me
+                </span>
+                <div className="relative ml-1">
+                  <span 
+                    className="text-gray-400 hover:text-gray-600 cursor-help text-xs"
+                    title={rememberMe ? "You'll stay logged in until you manually log out" : "You'll be logged out when you close your browser"}
+                  >
+                    ℹ️
+                  </span>
+                </div>
               </label>
               <Link
                 to="/forgot-password"
@@ -246,13 +294,7 @@ export const LoginPage: React.FC = () => {
           {/* Register Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link
-                to="/register"
-                className="text-primary-800 hover:text-primary-900 font-medium"
-              >
-                Register Now
-              </Link>
+              Need an account? Contact your administrator
             </p>
           </div>
 
