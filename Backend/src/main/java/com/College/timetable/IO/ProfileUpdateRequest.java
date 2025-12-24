@@ -26,7 +26,9 @@ public class ProfileUpdateRequest {
     @Size(max = 15)
     private String phone;
     
-    private Integer weeklyHoursLimit;
+    private Integer minWeeklyHours;
+    
+    private Integer maxWeeklyHours;
     
     private String specialization;
     

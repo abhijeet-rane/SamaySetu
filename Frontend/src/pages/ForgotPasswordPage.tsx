@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Input } from '../components/common/Input';
 import { Button } from '../components/common/Button';
+import { authAPI } from '../services/api';
 import logo from '../assets/logo.png';
 import bannerVideo from '../assets/banner_video1.mp4';
 
@@ -42,12 +43,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // TODO: Implement forgot password API call
-      // await authAPI.forgotPassword({ email });
-      
-      // Simulating API call for now
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await authAPI.forgotPassword(email);
       setIsEmailSent(true);
       toast.success('Password reset link sent to your email!');
     } catch (error: any) {

@@ -7,6 +7,7 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { ChangeFirstPasswordPage } from './pages/ChangeFirstPasswordPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
 
@@ -36,35 +37,36 @@ function App() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route 
-        path="/login" 
-        element={isAuthenticated ? <Navigate to={user?.role === 'ADMIN' ? "/admin/dashboard" : "/dashboard"} /> : <LoginPage />} 
+      <Route
+        path="/login"
+        element={isAuthenticated ? <Navigate to={user?.role === 'ADMIN' ? "/admin/dashboard" : "/dashboard"} /> : <LoginPage />}
       />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
-      
+      <Route path="/change-first-password" element={<ChangeFirstPasswordPage />} />
+
       {/* Teacher Routes */}
-      <Route 
-        path="/dashboard/*" 
+      <Route
+        path="/dashboard/*"
         element={
           <ProtectedRoute requiredRole="TEACHER">
             <TeacherDashboard />
           </ProtectedRoute>
-        } 
+        }
       />
-      
+
       {/* Admin Routes */}
-      <Route 
-        path="/admin/*" 
+      <Route
+        path="/admin/*"
         element={
           <ProtectedRoute requiredRole="ADMIN">
             <AdminDashboard />
           </ProtectedRoute>
-        } 
+        }
       />
-      
+
       {/* Default Route */}
       <Route path="/" element={<Navigate to={isAuthenticated ? (user?.role === 'ADMIN' ? "/admin/dashboard" : "/dashboard") : "/login"} />} />
       <Route path="*" element={<Navigate to="/" />} />

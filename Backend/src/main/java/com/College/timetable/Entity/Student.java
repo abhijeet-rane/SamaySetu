@@ -28,43 +28,43 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Student {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@NotBlank(message = "Student name is required")
 	@Size(max = 100)
 	@Column(nullable = false)
 	private String name;
-	
+
 	@NotBlank(message = "Roll number is required")
 	@Size(max = 20)
 	@Column(name = "roll_number", nullable = false, unique = true)
 	private String rollNumber;
-	
+
 	@Email(message = "Invalid email format")
 	@Column(unique = true)
 	private String email;
-	
+
 	@Size(max = 15)
 	private String phone;
-	
+
 	@NotNull(message = "Admission year is required")
 	@Column(name = "admission_year", nullable = false)
 	private Integer admissionYear;
-	
+
 	@Column(name = "is_active")
 	private Boolean isActive = true;
-	
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Timestamp createdAt;
-	
+
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private Timestamp updatedAt;
-	
+
 	// Relationships
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "division_id")

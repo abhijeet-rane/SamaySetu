@@ -9,9 +9,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -34,17 +37,26 @@ public class DepartmentEntity {
 	
 	@NotBlank(message = "Department name is required")
 	@Size(max = 100)
-	@Column(name = "name", nullable = false, unique = true)
+	@Column(name = "name", nullable = false)
 	private String name;
 	
 	@NotBlank(message = "Department code is required")
 	@Size(max = 10)
-	@Column(name = "code", nullable = false, unique = true)
+	@Column(name = "code", nullable = false)
 	private String code;
 	
 	@Size(max = 100)
 	@Column(name = "head_of_department")
 	private String headOfDepartment;
+	
+	// Comma-separated years (e.g., "1,2,3,4" for all years)
+	@Column(name = "years")
+	private String years = "1,2,3,4";
+	
+	// Link to academic year - departments are now academic year specific
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "academic_year_id")
+	private AcademicYear academicYear;
 	
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)

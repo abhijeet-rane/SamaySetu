@@ -13,6 +13,11 @@ const api = axios.create({
 // Request interceptor to add JWT token
 api.interceptors.request.use(
   (config) => {
+    // Don't add Authorization header for auth endpoints
+    if (config.url && config.url.startsWith('/auth')) {
+      return config;
+    }
+
     const token = localStorage.getItem('jwt_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -35,11 +40,11 @@ api.interceptors.response.use(
     } else if (error.response?.status === 403) {
       // 403 Forbidden - check if it's actually an auth issue or validation error
       const errorMessage = error.response?.data?.message || error.response?.data || '';
-      const isAuthError = typeof errorMessage === 'string' && 
-        (errorMessage.toLowerCase().includes('token') || 
-         errorMessage.toLowerCase().includes('unauthorized') ||
-         errorMessage.toLowerCase().includes('forbidden'));
-      
+      const isAuthError = typeof errorMessage === 'string' &&
+        (errorMessage.toLowerCase().includes('token') ||
+          errorMessage.toLowerCase().includes('unauthorized') ||
+          errorMessage.toLowerCase().includes('forbidden'));
+
       if (isAuthError) {
         localStorage.removeItem('jwt_token');
         localStorage.removeItem('auth-storage');
@@ -57,6 +62,7 @@ export const authAPI = {
   verifyEmail: (token: string) => api.get(`/auth/verify-email?token=${token}`),
   forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
   resetPassword: (data: any) => api.post('/auth/reset-password', data),
+  changeFirstPassword: (data: any) => api.post('/auth/change-first-password', data),
   generateHash: (password: string) => api.post('/auth/', { password }),
 };
 
@@ -73,9 +79,12 @@ export const teacherAPI = {
 export const departmentAPI = {
   getAll: () => api.get('/admin/api/departments'),
   getById: (id: number) => api.get(`/admin/api/departments/${id}`),
+  getByAcademicYear: (academicYearId: number) => api.get(`/admin/api/departments/academic-year/${academicYearId}`),
   create: (data: any) => api.post('/admin/api/departments', data),
   update: (id: number, data: any) => api.put(`/admin/api/departments/${id}`, data),
   delete: (id: number) => api.delete(`/admin/api/departments/${id}`),
+  copyToAcademicYear: (sourceAcademicYearId: number, targetAcademicYearId: number, departmentIds: number[]) => 
+    api.post('/admin/api/departments/copy', { sourceAcademicYearId, targetAcademicYearId, departmentIds }),
 };
 
 // Teacher API (Admin) - uses same endpoints as regular teacher API
@@ -136,11 +145,61 @@ export const timeSlotAPI = {
   update: (id: number, data: any) => api.put(`/admin/api/time-slots/${id}`, data),
   delete: (id: number) => api.delete(`/admin/api/time-slots/${id}`),
   getActive: () => api.get('/admin/api/time-slots/active'),
+  getByType: (type: string) => api.get(`/admin/api/time-slots/type/${type}`),
+};
+
+// Batch API (Admin)
+export const batchAPI = {
+  getAll: () => api.get('/admin/api/batches'),
+  getById: (id: number) => api.get(`/admin/api/batches/${id}`),
+  create: (data: any) => api.post('/admin/api/batches', data),
+  update: (id: number, data: any) => api.put(`/admin/api/batches/${id}`, data),
+  delete: (id: number) => api.delete(`/admin/api/batches/${id}`),
+  getByDivision: (divisionId: number) => api.get(`/admin/api/batches/division/${divisionId}`),
 };
 
 // Time Slot API (Public - for teachers)
 export const timeSlotPublicAPI = {
   getAll: () => api.get('/api/time-slots'),
+};
+
+// Staff API (for restricted profile updates)
+export const staffAPI = {
+  getProfile: () => api.get('/api/staff/profile'),
+  updateProfile: (data: any) => api.put('/api/staff/profile', data),
+  changePassword: (data: any) => api.post('/api/staff/change-password', data),
+};
+
+// Admin API
+export const adminAPI = {
+  uploadStaff: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/admin/upload-staff', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  downloadStaffTemplate: () => api.get('/admin/download-staff-template', {
+    responseType: 'blob', // Important for file downloads
+  }),
+  createStaffManually: (data: any) => api.post('/admin/create-staff', data),
+  updateStaff: (id: number, data: any) => api.put(`/admin/update-staff/${id}`, data),
+  uploadCourses: (file: File, departmentId: number, year: number) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('departmentId', departmentId.toString());
+    formData.append('year', year.toString());
+    return api.post('/admin/upload-courses', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  downloadCoursesTemplate: () => api.get('/admin/download-courses-template', {
+    responseType: 'blob',
+  }),
 };
 
 export default api;

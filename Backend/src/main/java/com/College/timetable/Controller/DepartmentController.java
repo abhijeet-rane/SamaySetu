@@ -1,6 +1,7 @@
 package com.College.timetable.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,12 @@ public class DepartmentController {
 		return ResponseEntity.ok(departmentService.getall());
 	}
 	
+	@GetMapping("/academic-year/{academicYearId}")
+	public ResponseEntity<List<DepartmentEntity>> getDepartmentsByAcademicYear(@PathVariable Long academicYearId) {
+		log.info("Fetching departments for academic year: {}", academicYearId);
+		return ResponseEntity.ok(departmentService.getByAcademicYear(academicYearId));
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<DepartmentEntity> getDepartmentById(@PathVariable Long id) {
 		log.info("Fetching department with id: {}", id);
@@ -60,5 +67,19 @@ public class DepartmentController {
 		log.info("Deleting department with id: {}", id);
 		departmentService.delete(id);
 		return ResponseEntity.ok("Department deleted successfully");
+	}
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping("/copy")
+	public ResponseEntity<List<DepartmentEntity>> copyDepartments(@RequestBody Map<String, Object> request) {
+		Long sourceAcademicYearId = Long.valueOf(request.get("sourceAcademicYearId").toString());
+		Long targetAcademicYearId = Long.valueOf(request.get("targetAcademicYearId").toString());
+		List<Long> departmentIds = ((List<Number>) request.get("departmentIds")).stream()
+				.map(Number::longValue)
+				.toList();
+		
+		log.info("Copying {} departments from academic year {} to {}", departmentIds.size(), sourceAcademicYearId, targetAcademicYearId);
+		List<DepartmentEntity> copied = departmentService.copyDepartmentsToAcademicYear(sourceAcademicYearId, targetAcademicYearId, departmentIds);
+		return ResponseEntity.ok(copied);
 	}
 }

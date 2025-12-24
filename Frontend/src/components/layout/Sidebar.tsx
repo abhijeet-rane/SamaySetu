@@ -1,15 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  FiHome, 
-  FiUsers, 
-  FiBook, 
-  FiCalendar, 
+import {
+  FiHome,
+  FiUsers,
+  FiCalendar,
   FiGrid,
   FiSettings,
   FiX,
   FiClock,
-  FiBriefcase
+  FiLayers
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -29,12 +28,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isAdmin = fal
 
   const adminLinks = [
     { to: '/admin/dashboard', icon: FiHome, label: 'Dashboard' },
-    { to: '/admin/departments', icon: FiBriefcase, label: 'Departments' },
-    { to: '/admin/teachers', icon: FiUsers, label: 'Teachers' },
-    { to: '/admin/courses', icon: FiBook, label: 'Courses' },
+    { to: '/admin/academic-structure', icon: FiLayers, label: 'Academic Structure' },
+    { to: '/admin/staff', icon: FiUsers, label: 'Staff' },
     { to: '/admin/rooms', icon: FiGrid, label: 'Rooms' },
-    { to: '/admin/academic-years', icon: FiCalendar, label: 'Academic Years' },
-    { to: '/admin/divisions', icon: FiUsers, label: 'Divisions' },
     { to: '/admin/time-slots', icon: FiClock, label: 'Time Slots' },
   ];
 
@@ -57,9 +53,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isAdmin = fal
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
+        className={`fixed lg:sticky lg:top-16 inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 lg:h-[calc(100vh-4rem)] ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          }`}
       >
         <div className="flex flex-col h-full">
           {/* Close Button (Mobile) */}
@@ -80,10 +75,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isAdmin = fal
                 to={link.to}
                 onClick={() => window.innerWidth < 1024 && onClose()}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-primary-800 text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                  `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
+                    ? 'bg-primary-800 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
                   }`
                 }
               >

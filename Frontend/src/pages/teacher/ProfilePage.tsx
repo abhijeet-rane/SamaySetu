@@ -5,7 +5,7 @@ import { Card } from '../../components/common/Card';
 import { Input } from '../../components/common/Input';
 import { Button } from '../../components/common/Button';
 import { useAuthStore } from '../../store/authStore';
-import { teacherAPI } from '../../services/api';
+import { staffAPI } from '../../services/api';
 
 export const ProfilePage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -36,7 +36,7 @@ export const ProfilePage: React.FC = () => {
   const fetchProfile = async () => {
     try {
       setIsFetching(true);
-      const response = await teacherAPI.getProfile();
+      const response = await staffAPI.getProfile();
       const data = response.data;
       setProfileData({
         name: data.name || '',
@@ -44,7 +44,9 @@ export const ProfilePage: React.FC = () => {
         phone: data.phone || '',
         employeeId: data.employeeId || '',
         specialization: data.specialization || '',
-        weeklyHoursLimit: data.weeklyHoursLimit?.toString() || '25',
+        weeklyHoursLimit: data.minWeeklyHours && data.maxWeeklyHours 
+          ? `${data.minWeeklyHours} - ${data.maxWeeklyHours} hours` 
+          : '10 - 30 hours',
         department: data.department,
       });
     } catch (error: any) {
@@ -60,17 +62,12 @@ export const ProfilePage: React.FC = () => {
     setIsLoading(true);
     try {
       const updateData = {
-        name: profileData.name,
         phone: profileData.phone,
         specialization: profileData.specialization,
-        weeklyHoursLimit: parseInt(profileData.weeklyHoursLimit),
-        email: profileData.email,
-        employeeId: profileData.employeeId,
-        departmentId: profileData.department?.id || null,
         // Don't include password unless changing it
       };
       
-      await teacherAPI.updateProfile(updateData);
+      await staffAPI.updateProfile(updateData);
       toast.success('Profile updated successfully!');
       await fetchProfile(); // Refresh profile data
     } catch (error: any) {
@@ -100,26 +97,34 @@ export const ProfilePage: React.FC = () => {
       return;
     }
 
+    if (passwordData.currentPassword === passwordData.newPassword) {
+      toast.error('New password must be different from current password');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Update profile with new password
-      const updateData = {
-        name: profileData.name,
-        phone: profileData.phone,
-        specialization: profileData.specialization,
-        weeklyHoursLimit: parseInt(profileData.weeklyHoursLimit),
-        email: profileData.email,
-        employeeId: profileData.employeeId,
-        departmentId: profileData.department?.id || null,
-        password: passwordData.newPassword, // Include password for change
-      };
+      await staffAPI.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+        confirmPassword: passwordData.confirmPassword,
+      });
       
-      await teacherAPI.updateProfile(updateData);
       toast.success('Password changed successfully!');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error: any) {
       console.error('Error changing password:', error);
-      const message = error.response?.data?.message || error.response?.data || 'Failed to change password';
+      let message = 'Failed to change password. Please try again.';
+      
+      if (error.response) {
+        const data = error.response.data;
+        if (typeof data === 'string') {
+          message = data;
+        } else if (data.message) {
+          message = data.message;
+        }
+      }
+      
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -184,13 +189,14 @@ export const ProfilePage: React.FC = () => {
         {/* Profile Information */}
         <Card className="lg:col-span-2">
           <h3 className="card-header">Personal Information</h3>
+          
           <form onSubmit={handleProfileUpdate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Full Name"
                 icon={<FiUser />}
                 value={profileData.name}
-                onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                disabled
               />
               <Input
                 label="Employee ID"
@@ -216,10 +222,10 @@ export const ProfilePage: React.FC = () => {
                 onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
               />
               <Input
-                label="Weekly Hours Limit"
-                type="number"
+                label="Weekly Hours Range"
+                type="text"
                 value={profileData.weeklyHoursLimit}
-                onChange={(e) => setProfileData({ ...profileData, weeklyHoursLimit: e.target.value })}
+                disabled
               />
             </div>
 
@@ -290,9 +296,9 @@ export const ProfilePage: React.FC = () => {
         <Card>
           <div className="text-center">
             <p className="text-3xl font-bold text-primary-800 mb-1">
-              {profileData.weeklyHoursLimit || '25'}
+              {profileData.weeklyHoursLimit || '10 - 30 hours'}
             </p>
-            <p className="text-sm text-gray-600">Weekly Hours Limit</p>
+            <p className="text-sm text-gray-600">Weekly Hours Range</p>
           </div>
         </Card>
         <Card>
