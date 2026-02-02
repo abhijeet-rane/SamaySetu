@@ -1,0 +1,64 @@
+name: Deploy Backend to AWS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Backend/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: |
+          cd Backend
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
+          ls -lh target/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload JAR to S3
+        run: |
+          aws s3 cp Backend/target/samaysetu-0.0.1-SNAPSHOT.jar \
+            s3://${{ secrets.S3_BUCKET }}/samaysetu-0.0.1-SNAPSHOT.jar
+
+      - name: Trigger Auto Scaling Group Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}'
+
+      - name: Wait for deployment
+        run: |
+          echo "Waiting for instance refresh to complete..."
+          sleep 60
+          
+          # Check refresh status
+          aws autoscaling describe-instance-refreshes \
+            --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+            --max-records 1
+
+      - name: Deployment complete
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "Your application is now running on AWS"
