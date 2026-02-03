@@ -101,7 +101,9 @@ Frontend uses the `VITE_API_URL` environment variable set in AWS Amplify.
 
 **No code changes needed!** Just set the environment variable in AWS Amplify:
 - Key: `VITE_API_URL`
-- Value: `http://your-backend-url.elasticbeanstalk.com`
+- Value: `http://samaysetu-alb-1476674973.ap-south-1.elb.amazonaws.com` 
+or
+`https://d2vtvoxh8myvkq.cloudfront.net`
 
 ---
 
@@ -109,18 +111,15 @@ Frontend uses the `VITE_API_URL` environment variable set in AWS Amplify.
 
 When deploying to AWS, these environment variables override the defaults:
 
-### Backend (Elastic Beanstalk)
-```
-SPRING_DATASOURCE_URL=jdbc:postgresql://db.tehdpecquwvgwpombtbl.supabase.co:5432/postgres
-SPRING_DATASOURCE_USERNAME=postgres
-SPRING_DATASOURCE_PASSWORD=samaysetumitaoe
-SERVER_PORT=5000
-SPRING_PROFILES_ACTIVE=prod
-```
+### Backend (EC2) refer AWS_COMPLETE_AUTO_DEPLOY_SETUP.MD
 
 ### Frontend (Amplify)
 ```
-VITE_API_URL=http://samaysetu-backend.elasticbeanstalk.com
+VITE_API_URL=http://samaysetu-alb-1476674973.ap-south-1.elb.amazonaws.com
+
+or
+
+VITE_API_URL=https://d2vtvoxh8myvkq.cloudfront.net
 ```
 
 ---
@@ -150,9 +149,7 @@ VITE_API_URL=http://samaysetu-backend.elasticbeanstalk.com
    mvnw.cmd clean package -DskipTests
    ```
 
-3. **Deploy**: Upload JAR to Elastic Beanstalk
-
-4. **Done!** ✅
+3. **Done!** ✅
 
 ### Scenario: You want to continue local development
 
@@ -168,36 +165,6 @@ VITE_API_URL=http://samaysetu-backend.elasticbeanstalk.com
    ```
 
 3. **Done!** ✅
-
----
-
-## 🚫 What You DON'T Need to Do
-
-❌ Change localhost URLs in code  
-❌ Edit multiple configuration files  
-❌ Modify frontend API URLs  
-❌ Update database connection strings manually  
-❌ Change port numbers  
-
-✅ Just change **one line** in `application.properties`!
-
----
-
-## 🐛 Troubleshooting
-
-### "Wrong profile is active"
-Check `application.properties` line 4:
-```properties
-spring.profiles.active=dev  # or 'prod'
-```
-
-### "Can't connect to database"
-- **Dev**: Check Supabase is accessible
-- **Prod**: Check environment variables in AWS Elastic Beanstalk
-
-### "Frontend can't reach backend"
-- **Dev**: Backend should be running on `http://localhost:8083`
-- **Prod**: Check `VITE_API_URL` in AWS Amplify environment variables
 
 ---
 
