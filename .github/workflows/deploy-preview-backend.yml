@@ -1,18 +1,18 @@
-name: Deploy Preview Backend to Azure
+name: Preview CI and Deploy on Azure
 
 on:
   push:
     branches:
       - preview
+  pull_request:
+    branches:
+      - preview
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  backend-ci:
+    name: Backend Maven build
     runs-on: ubuntu-latest
-
-    env:
-      AZURE_WEBAPP_NAME: samaysetu-preview-api
-      JAVA_VERSION: '17'
 
     steps:
       - name: Checkout
@@ -21,7 +21,65 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: '17'
+          distribution: temurin
+          cache: maven
+
+      - name: Build backend
+        working-directory: Backend
+        run: mvn -B clean package -DskipTests
+
+  frontend-ci:
+    name: Frontend lint and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: Frontend/pnpm-lock.yaml
+
+      - name: Install frontend dependencies
+        working-directory: Frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint frontend
+        working-directory: Frontend
+        run: pnpm run lint
+
+      - name: Build frontend
+        working-directory: Frontend
+        run: pnpm run build
+
+  deploy-backend:
+    name: Deploy backend to Azure
+    needs:
+      - backend-ci
+      - frontend-ci
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+
+    env:
+      AZURE_WEBAPP_NAME: samaysetu-preview-api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
           distribution: temurin
           cache: maven
 
@@ -35,3 +93,45 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_PREVIEW_WEBAPP_PUBLISH_PROFILE }}
           package: Backend/target/*.jar
+
+  deploy-frontend:
+    name: Deploy frontend to Vercel
+    needs:
+      - backend-ci
+      - frontend-ci
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: Frontend/pnpm-lock.yaml
+
+      - name: Install Vercel CLI
+        run: pnpm add --global vercel@latest
+
+      - name: Pull Vercel environment
+        working-directory: Frontend
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build frontend for Vercel
+        working-directory: Frontend
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy frontend to Vercel
+        working-directory: Frontend
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

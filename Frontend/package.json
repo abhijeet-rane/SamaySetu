@@ -3,8 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "dev": "vite",
+    "lint": "eslint .",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -21,13 +23,19 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
+    "typescript-eslint": "^8.46.4",
     "vite": "^5.1.0"
   }
 }
