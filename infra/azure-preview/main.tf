@@ -25,7 +25,6 @@ locals {
     REDIS_PASSWORD                 = "__SET_IN_AZURE_APP_SETTINGS__"
     REDIS_SSL_ENABLED              = "true"
     PORT                           = "8080"
-    WEBSITE_RUN_FROM_PACKAGE       = "1"
     SCM_DO_BUILD_DURING_DEPLOYMENT = "false"
   }
 }

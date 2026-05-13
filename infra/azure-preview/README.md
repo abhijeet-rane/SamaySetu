@@ -20,6 +20,8 @@ Runtime app secrets such as JWT, Gmail SMTP, Redis, admin bootstrap password, an
 
 The Web App ignores future `app_settings` drift so secret rotation through Azure CLI or the Azure Portal is not overwritten by later Terraform runs.
 
+Do not set `WEBSITE_RUN_FROM_PACKAGE` for this Java App Service. Azure App Service run-from-package is not supported for built-in Java runtimes, and it can cause JAR deployment failures.
+
 ## Expected Frontend
 
 The frontend is already deployed at:
