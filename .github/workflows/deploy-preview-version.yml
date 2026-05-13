@@ -1,0 +1,95 @@
+name: Preview CI and Deploy on Azure
+
+on:
+  push:
+    branches:
+      - preview
+  pull_request:
+    branches:
+      - preview
+  workflow_dispatch:
+
+jobs:
+  backend-ci:
+    name: Backend Maven build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: maven
+
+      - name: Build backend
+        working-directory: Backend
+        run: mvn -B clean package -DskipTests
+
+  frontend-ci:
+    name: Frontend lint and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: Frontend/pnpm-lock.yaml
+
+      - name: Install frontend dependencies
+        working-directory: Frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint frontend
+        working-directory: Frontend
+        run: pnpm run lint
+
+      - name: Build frontend
+        working-directory: Frontend
+        run: pnpm run build
+
+  deploy-backend:
+    name: Deploy backend to Azure
+    needs:
+      - backend-ci
+      - frontend-ci
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+
+    env:
+      AZURE_WEBAPP_NAME: samaysetu-preview-api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: maven
+
+      - name: Build backend JAR
+        working-directory: Backend
+        run: mvn -B clean package -DskipTests
+
+      - name: Deploy JAR to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PREVIEW_WEBAPP_PUBLISH_PROFILE }}
+          package: Backend/target/*.jar
