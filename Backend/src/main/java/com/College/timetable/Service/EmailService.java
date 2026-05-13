@@ -42,7 +42,7 @@ public class EmailService {
             helper.setFrom(fromEmail, fromName);
             helper.setTo(toEmail);
             helper.setSubject("SamaySetu - Email Verification");
-            helper.setText("Dear Teacher,\n\n" +
+            helper.setText("Dear User,\n\n" +
                     "Thank you for registering with SamaySetu Timetable Management System.\n\n" +
                     "Please verify your email address by clicking the link below:\n" +
                     verificationUrl + "\n\n" +
@@ -62,7 +62,7 @@ public class EmailService {
                 message.setFrom(fromEmail);
                 message.setTo(toEmail);
                 message.setSubject("SamaySetu - Email Verification");
-                message.setText("Dear Teacher,\n\n" +
+                message.setText("Dear User,\n\n" +
                         "Thank you for registering with SamaySetu Timetable Management System.\n\n" +
                         "Please verify your email address by clicking the link below:\n" +
                         verificationUrl + "\n\n" +
@@ -98,7 +98,7 @@ public class EmailService {
                     </div>
                     
                     <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-radius: 0 0 10px 10px;">
-                        <p style="font-size: 16px; margin-bottom: 20px;">Dear Teacher,</p>
+                        <p style="font-size: 16px; margin-bottom: 20px;">Dear User,</p>
                         
                         <p style="font-size: 16px; margin-bottom: 20px;">
                             We received a request to reset your password for your SamaySetu account. 
@@ -161,7 +161,7 @@ public class EmailService {
                 message.setFrom(fromEmail);
                 message.setTo(toEmail);
                 message.setSubject("🔐 SamaySetu - Password Reset Request");
-                message.setText("Dear Teacher,\n\n" +
+                message.setText("Dear User,\n\n" +
                         "We received a request to reset your password for your SamaySetu account.\n\n" +
                         "Please click the link below to reset your password:\n" +
                         resetUrl + "\n\n" +
