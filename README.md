@@ -47,6 +47,126 @@
 
 ---
 
+## 📸 Project Showcase (Screenshots)
+
+To demonstrate the design and functionality of SamaySetu, here is a detailed visual tour of the platform's features:
+
+### 🔑 1. Login Page
+Secure authentication gateway for administrative users, coordinators, and faculty members with role-based routing.
+
+<p align="center">
+  <img src="docs/assets/screenshots/login_page.png" alt="Login Page" width="95%" />
+  <br/>
+  <em>Figure 1: Secure gateway interface with JWT-based session authorization.</em>
+</p>
+
+---
+
+### 📊 2. Analytics & Admin Dashboard
+An overview dashboard displaying scheduling progress, room utilization rates, teacher workload statistics, and department analytics.
+
+<p align="center">
+  <img src="docs/assets/screenshots/admin_dashboard.png" alt="Admin Dashboard Analytics" width="95%" />
+  <br/>
+  <em>Figure 2: Main Admin Analytics Dashboard with real-time statistics on classroom utilization and scheduling progression.</em>
+</p>
+
+---
+
+### 🗓️ 3. Interactive Timetable Builder
+The core schedule editing interface featuring a drag-and-drop days-versus-slots grid, dynamic course allocations, and color-coded lecture/lab cards.
+
+<p align="center">
+  <img src="docs/assets/screenshots/timetable_builder.png" alt="Timetable Builder" width="95%" />
+  <br/>
+  <em>Figure 3: Custom timetable scheduling board showing interactive theory (blue) and laboratory (purple) allocations.</em>
+</p>
+
+---
+
+### 🚨 4. Real-Time Conflict Resolution
+Visual error feedback triggered by the 8-point conflict detection engine, detailing exactly where resources (teachers, rooms, divisions) are double-booked.
+
+<p align="center">
+  <img src="docs/assets/screenshots/conflict_validation.png" alt="Conflict Resolution Engine" width="95%" />
+  <br/>
+  <em>Figure 4: Conflict detection overlay notifying the scheduling coordinator of scheduling collisions with exact details.</em>
+</p>
+
+---
+
+### 🔍 5. Pre-Publish Validation Check
+A comprehensive scheduling validation checklist that verifies course hour quotas, teacher work limits, and breaks before publishing a schedule.
+
+<p align="center">
+  <img src="docs/assets/screenshots/pre_publish_checks.png" alt="Pre-Publish Validation Checks" width="95%" />
+  <br/>
+  <em>Figure 5: Automated schedule audit checklist displaying potential allocation warnings and verification checks.</em>
+</p>
+
+---
+
+### 🏫 6. Resource Viewer (HOD Panel)
+A unified schedule viewer allowing administrators to query occupancy and timetables by specific Classroom, Laboratory, or HOD faculty member.
+
+<p align="center">
+  <img src="docs/assets/screenshots/resource_viewer_faculty.png" alt="Resource Timetable Viewer - Faculty" width="95%" />
+  <br/>
+  <em>Figure 6.1: Unified resource viewer displaying the weekly teacher occupancy chart.</em>
+</p>
+
+<p align="center">
+  <img src="docs/assets/screenshots/resource_viewer_classroom.png" alt="Resource Timetable Viewer - Classroom" width="95%" />
+  <br/>
+  <em>Figure 6.2: Unified resource viewer displaying the weekly classroom schedule.</em>
+</p>
+
+---
+
+### 👤 7. Teacher Portal & Availability Declaration
+Self-service views for teachers, featuring an interactive grid to submit slot-by-slot availability preferences (Preferred, Neutral, Unavailable).
+
+<p align="center">
+  <img src="docs/assets/screenshots/teacher_availability.png" alt="Teacher Portal Preferences" width="95%" />
+  <br/>
+  <em>Figure 7: Faculty preference selection grid allowing teachers to indicate preferred and blocked time slots.</em>
+</p>
+
+---
+
+### 👥 8. Faculty Registry & Bulk Onboarding
+Management portal for administrative HODs to manage faculty records and perform bulk staff onboarding via CSV uploads with format validation.
+
+<p align="center">
+  <img src="docs/assets/screenshots/faculty_management.png" alt="Faculty Registry" width="95%" />
+  <br/>
+  <em>Figure 8: Teacher records registry containing full contact lists, active roles, and bulk CSV import controls.</em>
+</p>
+
+---
+
+### ⚙️ 9. Academic Structure Configurator
+Settings interface for configuring multi-department structures, academic years, course catalogs, student divisions, room capacities, and slots.
+
+<p align="center">
+  <img src="docs/assets/screenshots/academic_registry.png" alt="Academic Registry Configurator" width="95%" />
+  <br/>
+  <em>Figure 9: System configuration center showing department division lists, batch structures, and course attributes.</em>
+</p>
+
+---
+
+### 📄 10. Institutional Document Exports
+Generated PDF and Excel documents matching the official, institutional timetable layouts of universities (incorporating vertical text, signature blocks, and loading reports).
+
+<p align="center">
+  <img src="docs/assets/screenshots/document_exports_division_wise_timetable.png" alt="Institutional PDF & Excel Exports" width="95%" />
+  <br/>
+  <em>Figure 10: High-fidelity PDF export output matching the official formatting, complete with department signatures and workloads.</em>
+</p>
+
+---
+
 ## ✨ Features
 
 ### 🏗️ Academic Infrastructure Management
@@ -344,6 +464,14 @@ SamaySetu/
 │   └── public/                       # Static assets
 │
 ├── .github/workflows/                # 5 CI/CD pipelines
+├── docs/                             # System design and architecture docs (Public Showcase)
+│   ├── assets/                       # Image assets and logo
+│   │   └── screenshots/              # 10 Project UI screenshots (login_page.png, etc.)
+│   ├── architecture.md               # Detailed system architecture
+│   ├── database-schema.md            # Entity relations and schema description
+│   ├── deployment.md                 # Deployment targets and pipelines (AWS/Azure)
+│   ├── features.md                   # Comprehensive feature reference
+│   └── security.md                   # Security specifications and audit details
 ├── infra/                            # Terraform IaC (AWS provisioning)
 └── Scripts/                          # Database seed data
 ```
