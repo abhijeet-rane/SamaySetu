@@ -260,12 +260,6 @@ flowchart TD
 - Manual form with all fields: name, email, department, employee ID, role
 - Supports assigning any of the 6 roles
 - Automatic welcome email with temporary credentials
-
-### Approval Flow
-- Self-registered teachers require HOD/Admin approval
-- Pending approvals dashboard with approve/reject actions
-- Rejection triggers notification email
-
 ---
 
 ## 8. Teacher Self-Service Portal

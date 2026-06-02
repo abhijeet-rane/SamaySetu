@@ -87,8 +87,6 @@ graph TD
 ### Authentication Flow
 
 ```
-POST /auth/register        → Create account + send verification email
-GET  /auth/verify-email    → Verify email token
 POST /auth/login           → JWT token issuance
 POST /auth/forgot-password → Send reset token
 POST /auth/reset-password  → Reset with token

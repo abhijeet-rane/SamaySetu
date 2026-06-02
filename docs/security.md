@@ -196,7 +196,7 @@ All DTOs use Jakarta Bean Validation annotations:
 | **Password Hashing** | BCrypt with default rounds |
 | **Account Lockout** | 5 failed attempts → 15-minute automatic lock |
 | **First-Login Password Change** | Forced change for admin-created accounts |
-| **Email Verification** | Token-based verification for self-registration |
+| **Onboarding Credentialing** | Secure email delivery of system-generated credentials |
 | **Password Reset** | Time-limited token sent via email |
 | **CSRF Protection** | Disabled (appropriate for stateless JWT APIs) |
 | **CORS** | Configurable allowed origins via `app.cors.allowed-origins` |

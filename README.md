@@ -223,7 +223,7 @@ Generated PDF and Excel documents matching the official, institutional timetable
 ### 📧 Communication & Onboarding
 | Feature | Description |
 |---------|-------------|
-| **Email Verification** | Token-based email verification for new registrations |
+| **First-Login Onboarding** | Forced password change on initial login for all staff accounts |
 | **Staff Onboarding Emails** | Automated welcome emails with credentials for bulk-imported faculty |
 | **Password Reset Flow** | Secure token-based forgot/reset password workflow |
 
@@ -291,7 +291,7 @@ graph TB
     end
 
     subgraph "API Layer (Spring Boot 3.5)"
-        Auth["Auth Controller<br/>Login / Register / Verify"]
+        Auth["Auth Controller<br/>Login / Password Reset"]
         Admin["Admin Controllers<br/>CRUD Operations"]
         Timetable["Timetable Controller<br/>Scheduling Engine"]
         Faculty["Faculty Controller<br/>Self-Service APIs"]
@@ -509,30 +509,45 @@ flowchart TD
 
 ```mermaid
 sequenceDiagram
+    participant AD as Admin
     participant T as Teacher
     participant F as Frontend
-    participant A as Auth API
+    participant A as Admin API
     participant E as Email Service
     participant DB as Database
 
-    Note over T,DB: Registration Flow
-    T->>F: Register with college email
-    F->>A: POST /auth/register
-    A->>DB: Create account (unverified)
-    A->>E: Send verification email
-    E-->>T: Verification link
-    T->>A: GET /auth/verify-email?token=xxx
-    A->>DB: Mark as verified
-
-    Note over T,DB: Admin Bulk Import Flow
-    Note right of A: Admin uploads CSV
-    A->>DB: Create N teacher accounts
-    A->>E: Send N onboarding emails
+    Note over AD,DB: Single Staff Onboarding Flow
+    AD->>F: Create Faculty manually
+    F->>A: POST /admin/create-staff
+    A->>DB: Save account (isFirstLogin=true)
+    A->>E: Send onboarding welcome email
     E-->>T: Welcome email + temp password
     T->>F: Login (first time)
     F->>A: POST /auth/login
-    A-->>F: Force password change flag
-    F->>T: Redirect to change password
+    A-->>F: Return JWT + Force password change flag
+    F->>T: Redirect to set new password
+
+    Note over AD,DB: Bulk Onboarding Flow
+    AD->>F: Upload Faculty CSV file
+    F->>A: POST /admin/upload-staff
+    A->>DB: Save N accounts (isFirstLogin=true)
+    A->>E: Send N onboarding emails
+    E-->>T: Welcome email + temp passwords
+    T->>F: Login (first time)
+    F->>A: POST /auth/login
+    A-->>F: Return JWT + Force password change flag
+    F->>T: Redirect to set new password
+
+    Note over AD,DB: Admin Reset Password Flow
+    AD->>F: Reset password for Teacher
+    F->>A: POST /admin/reset-password/{id}
+    A->>DB: Update password + Set isFirstLogin=true
+    A->>E: Send password reset email
+    E-->>T: Reset email (admin name + temp password)
+    T->>F: Login (after reset)
+    F->>A: POST /auth/login
+    A-->>F: Return JWT + Force password change flag
+    F->>T: Redirect to set new password
 ```
 
 ---
