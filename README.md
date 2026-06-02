@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="SamaySetu Logo" width="80" />
+  <img src="docs/assets/logo.png" alt="SamaySetu Logo" width="150" />
 </p>
 
 <h1 align="center">SamaySetu (समयसेतु)</h1>
